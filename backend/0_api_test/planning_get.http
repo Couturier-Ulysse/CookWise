@@ -1,0 +1,2 @@
+GET http://localhost:3000/planning?user_email=ulysse%40gmail.com&year=2025&week_number=7
+content-type: application/json

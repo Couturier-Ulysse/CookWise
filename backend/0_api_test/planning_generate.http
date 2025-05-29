@@ -1,0 +1,11 @@
+POST http://localhost:3000/planning/generate
+content-type: application/json
+
+
+{
+    "user_email": "ulysse@gmail.com",
+    "year": 2025,
+    "week_number": 20,
+    "total_meals": 7,
+    "total_recipes": 2
+}

@@ -1,0 +1,37 @@
+POST http://localhost:3000/gather
+content-type: application/json
+
+{
+  "ingredients": [
+  "Blanc de poulet",
+  "Filet de saumon",
+  "Steak haché",
+  "Oeufs",
+  "Tofu",
+  "Thon en boîte",
+  "Lardons",
+  "Crevettes",
+  "Pois chiches",
+  "Haricots rouges",
+  "Carottes",
+  "Courgettes",
+  "Brocolis",
+  "Poivrons",
+  "Épinards",
+  "Tomates",
+  "Oignons",
+  "Champignons",
+  "Concombres",
+  "Pommes de terre",
+  "Riz basmati",
+  "Pâtes complètes",
+  "Quinoa",
+  "Semoule",
+  "Lentilles corail",
+  "Crème fraîche",
+  "Lait",
+  "Mozzarella",
+  "Yaourt nature",
+  "Parmesan"
+]
+}

@@ -1,0 +1,10 @@
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Texte CookWise -->
+  <text x="40" y="40" font-family="Arial, sans-serif" font-weight="700" font-size="28" fill="#FFB74D">
+    Cook
+  </text>
+  <text x="105" y="40" font-family="Arial, sans-serif" font-weight="700" font-size="28" fill="#4A4A4A">
+    Wise
+  </text>
+</svg>

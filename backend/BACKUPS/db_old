@@ -1,0 +1,126 @@
+
+// Ces trois fonctions m'en fiche
+
+func InitIngredientListTable() error {
+	// Ouverture du fichier
+	fmt.Println("[INFO] Insertion des ingredients listés")
+	file, err := os.Open("db/ingredients.txt")
+	if err != nil {
+		fmt.Println(err)
+		return errors.New("[ERREUR] Impossible de lire le fichier")
+	}
+	defer file.Close()
+
+	// Initialisation du scanner de fichier + loop
+	scanner := bufio.NewScanner(file)
+	insertedCounter := 0
+	for scanner.Scan() {
+		ingredient := scanner.Text()
+		verifExists,err := IngredientVerifyIfExists(ingredient)
+
+		if err != nil {
+			return err
+		}
+		if verifExists {
+			fmt.Println("[INFO] Ingrédient déjà présent : " + ingredient)
+			continue
+		}
+
+		err = InsertIntoIngredientListTable(ingredient)
+
+		// Gestion des éléments déjà présents
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+		insertedCounter += 1
+	}
+
+	if err := scanner.Err(); err != nil {
+        return errors.New("[ERROR] Erreur lors de la lecture du fichier")
+    }
+	fmt.Printf("[INFO] Lecture du fichier terminé, nouveaux ingrédients insérés : %d \n", insertedCounter)
+
+    return nil
+}
+
+func InsertIntoIngredientListTable(ing string) error {
+
+	query := `
+	INSERT INTO ingredient_list (name)
+	VALUES (?)
+	`
+	stmt, err := DB.Prepare(query)
+
+	if err != nil {
+		fmt.Println("[ERROR] Impossible d'insérer l'ingrédient")
+		return err
+	}
+	defer stmt.Close()
+
+	result, err := stmt.Exec(ing)
+	if err != nil {
+		fmt.Println("[ERROR] Impossible d'insérer l'ingrédient")
+		return err
+	}
+	_, _ = result.RowsAffected()
+
+	// Si aucun problème, true pour "élément inséré" + nil pas d'erreur
+	return nil
+}
+
+func IngredientVerifyIfExists(ing string) (bool,error) {
+	query := `
+	SELECT name FROM ingredient_list
+	WHERE name = ?
+	`
+	rows := DB.QueryRow(query,ing)
+
+	var element string
+	err := rows.Scan(&element)
+
+	if err != nil {
+        if err == sql.ErrNoRows {
+            // Aucun résultat trouvé, l'ingrédient peut être inséré
+            return false, nil
+        }
+        // Une autre erreur s'est produite
+        return true, errors.New("[ERROR] Impossible de lire l'ingrédient")
+    }
+
+    // Si l'élément correspond, il existe déjà
+    if element == ing {
+        return true, nil
+    }
+    // Par défaut, l'élément n'existe pas
+    return false, nil
+}
+
+func GeIngredientsFromDB() []string{
+	query := `
+	SELECT name FROM ingredient_list
+	`
+	rows, err := DB.Query(query)
+	if err != nil {
+		fmt.Println("[ERROR] Erreur lors de la récupération des ingrédients :", err)
+		return nil
+	}
+	defer rows.Close()
+
+	var ingredients []string
+	for rows.Next() {
+		var name string
+		if err := rows.Scan(&name); err != nil {
+			fmt.Println("[ERROR] Erreur lors du scan des résultats :", err)
+			return nil
+		}
+		ingredients = append(ingredients, name)
+	}
+
+	if err := rows.Err(); err != nil {
+		fmt.Println("[ERROR] Erreur lors de l'itération des résultats :", err)
+		return nil
+	}
+
+	return ingredients
+}
